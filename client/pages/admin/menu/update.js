@@ -32,7 +32,7 @@ export default function UpdateMenu() {
             setLoading(true);
             try {
                 // Fetch all menus (for mock mode). In real app, pass week range.
-                const res = await axios.get('http://localhost:5002/api/menu');
+                const res = await axios.get('process.env.NEXT_PUBLIC_API_URL/api/menu');
                 const allMenus = res.data;
 
                 const newMenuData = {};
@@ -42,7 +42,7 @@ export default function UpdateMenu() {
                 // Let's refactor to ensure we have meals first, or fetch them here if empty.
                 let currentMeals = allMeals;
                 if (currentMeals.length === 0) {
-                    const mealsRes = await axios.get('http://localhost:5002/api/meals');
+                    const mealsRes = await axios.get('process.env.NEXT_PUBLIC_API_URL/api/meals');
                     currentMeals = mealsRes.data;
                     setAllMeals(currentMeals);
                 }
@@ -83,7 +83,7 @@ export default function UpdateMenu() {
 
     const fetchMeals = async () => {
         try {
-            const res = await axios.get('http://localhost:5002/api/meals');
+            const res = await axios.get('process.env.NEXT_PUBLIC_API_URL/api/meals');
             setAllMeals(res.data);
         } catch (err) {
             console.error(err);
@@ -188,7 +188,7 @@ export default function UpdateMenu() {
                             dinner: (menuData[`${dateStr}|dinner`] || []).map(m => m._id),
                         };
 
-                        return axios.post('http://localhost:5002/api/menu', {
+                        return axios.post('process.env.NEXT_PUBLIC_API_URL/api/menu', {
                             date: dateStr, // Send 'yyyy-MM-dd' string directly to avoid timezone shifts
                             dayOfWeek: dayName,
                             meals: mealsForDay
@@ -218,7 +218,7 @@ export default function UpdateMenu() {
     const handleDeleteMealFromDB = async (id) => {
         if (!confirm('Are you sure you want to delete this meal permanently?')) return;
         try {
-            await axios.delete(`http://localhost:5002/api/meals/${id}`);
+            await axios.delete(`process.env.NEXT_PUBLIC_API_URL/api/meals/${id}`);
             toast.success('Meal deleted');
             fetchMeals();
         } catch (err) {
