@@ -33,7 +33,7 @@ export default function StudentManagement() {
     const fetchStudents = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/students', {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/students`, {
                 headers: { 'x-auth-token': token }
             });
             setStudents(res.data);
@@ -123,7 +123,7 @@ export default function StudentManagement() {
                 }
 
                 const token = localStorage.getItem('token');
-                await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/students/bulk',
+                await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/students/bulk`,
                     { students: studentsToImport },
                     { headers: { 'x-auth-token': token } }
                 );

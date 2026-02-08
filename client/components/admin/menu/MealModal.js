@@ -48,7 +48,7 @@ export default function MealModal({ isOpen, onClose, onSave, meal = null }) {
                 await axios.put(`process.env.NEXT_PUBLIC_API_URL/api/meals/${meal._id}`, data);
                 toast.success('Meal updated!');
             } else {
-                await axios.post('process.env.NEXT_PUBLIC_API_URL/api/meals', data);
+                await axios.post(${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/meals', data);
                 toast.success('Meal created!');
             }
             onSave();

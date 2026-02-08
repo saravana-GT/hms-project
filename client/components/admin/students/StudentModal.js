@@ -69,7 +69,7 @@ export default function StudentModal({ isOpen, onClose, onSave, student }) {
                 toast.success('Student updated successfully');
             } else {
                 // Create
-                await axios.post('process.env.NEXT_PUBLIC_API_URL/api/students', formData, config);
+                await axios.post(${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/students', formData, config);
                 toast.success('Student created successfully');
             }
             onSave();

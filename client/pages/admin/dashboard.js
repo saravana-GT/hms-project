@@ -69,12 +69,12 @@ export default function AdminDashboard() {
             const config = { headers: { 'x-auth-token': token } };
 
             const [feedRes, stuRes, wasteRes, compRes, eventRes, predictRes] = await Promise.all([
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/feedback'),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/students', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/waste', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/complaints', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/events', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/analytics/predict', config)
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/feedback`),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/students`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/waste`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/complaints`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/events`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/analytics/predict`, config)
             ]);
 
             setFeedbacks(feedRes.data);
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            const res = await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/waste', {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/waste`, {
                 date: wasteDate,
                 amount: wasteAmount
             }, config);
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/notifications', { message: notifMsg, type: notifType }, { headers: { 'x-auth-token': token } });
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/notifications`, { message: notifMsg, type: notifType }, { headers: { 'x-auth-token': token } });
             toast.success("Notification sent!");
             setIsNotifModalOpen(false);
             setNotifMsg('');
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/events', { title: eventTitle, description: eventDesc }, { headers: { 'x-auth-token': token } });
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/events`, { title: eventTitle, description: eventDesc }, { headers: { 'x-auth-token': token } });
             toast.success("Event created!");
             setIsEventModalOpen(false);
             setEventTitle(''); setEventDesc('');

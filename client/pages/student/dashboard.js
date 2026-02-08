@@ -54,7 +54,7 @@ export default function StudentDashboard() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const notifRes = await axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/notifications', {
+                    const notifRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/notifications`, {
                         headers: { 'x-auth-token': token }
                     });
 
@@ -82,12 +82,12 @@ export default function StudentDashboard() {
             const config = { headers: { 'x-auth-token': token } };
 
             const [menuRes, mealsRes, notifRes, statsRes, eventsRes, feedRes] = await Promise.all([
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/menu'),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/meals'),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/notifications', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/student-stats', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/events', config),
-                axios.get('"+process.env.NEXT_PUBLIC_API_URL+"/api/feedback')
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/menu`),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/meals`),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/notifications`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/student-stats`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/events`, config),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/feedback`)
             ]);
 
             // Process Menu
@@ -173,7 +173,7 @@ export default function StudentDashboard() {
                 photoBase64 = await toBase64(photo);
             }
 
-            await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/feedback', {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/feedback`, {
                 mealType: targetMeal.type,
                 mealName: targetMeal.name,
                 rating,
@@ -191,7 +191,7 @@ export default function StudentDashboard() {
         if (!complaintType || !complaintDesc) return alert("Please fill details");
         try {
             const token = localStorage.getItem('token');
-            await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/complaints', {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/complaints`, {
                 type: complaintType,
                 description: complaintDesc
             }, { headers: { 'x-auth-token': token } });
@@ -214,7 +214,7 @@ export default function StudentDashboard() {
         try {
             const token = localStorage.getItem('token');
             const todayStr = format(new Date(), 'yyyy-MM-dd');
-            await axios.post('"+process.env.NEXT_PUBLIC_API_URL+"/api/attendance', {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'}/api/attendance`, {
                 mealType: targetMeal.type,
                 dateStr: todayStr
             }, { headers: { 'x-auth-token': token } });
