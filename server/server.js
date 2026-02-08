@@ -9,21 +9,11 @@ const PORT = process.env.PORT || 5000;
 // Initialize MOCK_DB state
 process.env.MOCK_DB = 'true';
 
-// Connect Database
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hms_db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000 // 5 seconds timeout
-})
-    .then(() => {
-        console.log('✅ MongoDB Connected');
-        process.env.MOCK_DB = 'false';
-    })
-    .catch(err => {
-        console.log('❌ MongoDB Connection Error:', err.message);
-        console.log('⚠️  SWITCHING TO MOCK MODE (IN-MEMORY STORAGE) ⚠️');
-        process.env.MOCK_DB = 'true';
-    });
+// Initialize Firebase Admin
+const { db } = require('./utils/firebase');
+console.log('✅ Firebase Realtime DB Connected (via Admin SDK)');
+process.env.MOCK_DB = 'false'; // We are now in "Real Mode" with Firebase
+
 
 // Middleware
 app.use(express.json());
@@ -54,11 +44,11 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/analytics', require('./routes/analytics'));
 
 // Mark Meal as Eaten
-app.post('/api/attendance', require('./middleware/auth'), (req, res) => {
+app.post('/api/attendance', require('./middleware/auth'), async (req, res) => {
     const { mealType, dateStr } = req.body;
     const { getMockAttendance, saveMockAttendance } = require('./utils/mockPersistence');
 
-    let attendance = getMockAttendance();
+    let attendance = await getMockAttendance();
     const existing = attendance.find(a => a.studentId === req.user.id && a.dateStr === dateStr && a.mealType === mealType);
 
     if (existing) {
@@ -74,22 +64,22 @@ app.post('/api/attendance', require('./middleware/auth'), (req, res) => {
     };
 
     attendance.unshift(newEntry);
-    saveMockAttendance(attendance);
+    await saveMockAttendance(attendance);
     res.json(newEntry);
 });
 
 // Mock Stats and Gamification endpoint
-app.get('/api/student-stats', require('./middleware/auth'), (req, res) => {
+app.get('/api/student-stats', require('./middleware/auth'), async (req, res) => {
     const { getMockFeedbacks, getMockAttendance, getMockEvents } = require('./utils/mockPersistence');
-    const allFeedbacks = getMockFeedbacks();
+    const allFeedbacks = await getMockFeedbacks();
     const studentFeedbacks = allFeedbacks.filter(f => f.studentId === req.user.id);
     const feedbackCount = studentFeedbacks.length;
 
-    const allAttendance = getMockAttendance();
+    const allAttendance = await getMockAttendance();
     const studentAttendance = allAttendance.filter(a => a.studentId === req.user.id);
     const eatenCount = studentAttendance.length;
 
-    const allEvents = getMockEvents();
+    const allEvents = await getMockEvents();
     const voteCount = allEvents.filter(e => e.votes.includes(req.user.id)).length;
 
     // Calculate REAL average for this student

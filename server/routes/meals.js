@@ -1,39 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload');
-
-// In-Memory Storage (Mock Database)
-let meals = [
-    {
-        _id: '1',
-        name: 'Idli & Sambar',
-        category: 'Breakfast',
-        type: 'Veg',
-        imageUrl: '',
-        nutritionalInfo: { calories: 150, protein: 4 },
-        ratingWindow: { startTime: '07:00', endTime: '10:00' }
-    },
-    {
-        _id: '2',
-        name: 'Chicken Biryani',
-        category: 'Lunch',
-        type: 'Non-Veg',
-        imageUrl: '',
-        nutritionalInfo: { calories: 450, protein: 25 },
-        ratingWindow: { startTime: '12:00', endTime: '14:00' }
-    }
-];
+const { getMockMeals, saveMockMeals } = require('../utils/mockPersistence');
 
 // @route   GET api/meals
 // @desc    Get all meals
-router.get('/', (req, res) => {
-    res.json(meals);
+router.get('/', async (req, res) => {
+    res.json(await getMockMeals());
 });
 
 // @route   POST api/meals
 // @desc    Create a meal
-router.post('/', upload.single('image'), (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
     const { name, category, type, calories, protein, startTime, endTime } = req.body;
+    const meals = await getMockMeals();
 
     const newMeal = {
         _id: Date.now().toString(),
@@ -52,14 +32,16 @@ router.post('/', upload.single('image'), (req, res) => {
     };
 
     meals.push(newMeal);
+    await saveMockMeals(meals);
     res.json(newMeal);
 });
 
 // @route   PUT api/meals/:id
 // @desc    Update a meal
-router.put('/:id', upload.single('image'), (req, res) => {
+router.put('/:id', upload.single('image'), async (req, res) => {
     const { id } = req.params;
     const { name, category, type, calories, protein, startTime, endTime } = req.body;
+    const meals = await getMockMeals();
 
     const index = meals.findIndex(m => m._id === id);
     if (index === -1) return res.status(404).json({ msg: 'Meal not found' });
@@ -84,14 +66,17 @@ router.put('/:id', upload.single('image'), (req, res) => {
     }
 
     meals[index] = updatedMeal;
+    await saveMockMeals(meals);
     res.json(updatedMeal);
 });
 
 // @route   DELETE api/meals/:id
 // @desc    Delete a meal
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const { id } = req.params;
+    let meals = await getMockMeals();
     meals = meals.filter(m => m._id !== id);
+    await saveMockMeals(meals);
     res.json({ msg: 'Meal removed' });
 });
 

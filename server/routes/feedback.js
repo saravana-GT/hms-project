@@ -6,16 +6,16 @@ const auth = require('../middleware/auth');
 
 // @route   GET api/feedback
 // @desc    Get all feedback
-router.get('/', (req, res) => {
-    res.json(getMockFeedbacks());
+router.get('/', async (req, res) => {
+    res.json(await getMockFeedbacks());
 });
 
 // @route   POST api/feedback
 // @desc    Submit feedback
-router.post('/', auth, (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { mealType, rating, comment, photo, mealName } = req.body;
 
-    const feedbacks = getMockFeedbacks();
+    const feedbacks = await getMockFeedbacks();
     const newFeedback = {
         id: Date.now(),
         studentId: req.user.id, // Store who gave the feedback
@@ -29,7 +29,7 @@ router.post('/', auth, (req, res) => {
     };
 
     feedbacks.unshift(newFeedback);
-    saveMockFeedbacks(feedbacks);
+    await saveMockFeedbacks(feedbacks);
     res.status(201).json(newFeedback);
 });
 

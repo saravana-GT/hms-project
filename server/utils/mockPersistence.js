@@ -1,111 +1,57 @@
-const fs = require('fs');
-const path = require('path');
+const { db } = require('./firebase');
 
-const MOCK_FILE = path.join(__dirname, '../data/mock_db.json');
-
-// Ensure data directory exists
-const dataDir = path.dirname(MOCK_FILE);
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initial structure if file doesn't exist
-if (!fs.existsSync(MOCK_FILE)) {
-    fs.writeFileSync(MOCK_FILE, JSON.stringify({
-        users: [],
-        waste: [],
-        menus: [],
-        feedbacks: [],
-        meals: [],
-        notifications: [],
-        complaints: [],
-        events: []
-    }, null, 2));
-}
-
-const readData = () => {
-    try {
-        const content = fs.readFileSync(MOCK_FILE, 'utf-8');
-        const data = JSON.parse(content);
-        // Ensure all keys exist
-        return {
-            users: data.users || [],
-            waste: data.waste || [],
-            menus: data.menus || [],
-            feedbacks: data.feedbacks || [],
-            meals: data.meals || [],
-            notifications: data.notifications || [],
-            complaints: data.complaints || [],
-            events: data.events || [],
-            attendance: data.attendance || []
-        };
-    } catch (err) {
-        console.error("Error reading mock DB:", err);
-        return { users: [], waste: [], menus: [], feedbacks: [], meals: [], notifications: [], complaints: [], events: [], attendance: [] };
-    }
+// Bridge to Firebase Realtime Database
+const getCollection = async (collectionName) => {
+    const snapshot = await db.ref(collectionName).once('value');
+    const data = snapshot.val();
+    if (!data) return [];
+    // Convert object to array if it's stored as an object (standard Firebase behavior)
+    return Object.keys(data).map(key => ({
+        ...data[key],
+        id: data[key].id || key
+    }));
 };
 
-const writeData = (data) => {
-    try {
-        fs.writeFileSync(MOCK_FILE, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error("Error writing mock DB:", err);
-    }
+const saveData = async (collectionName, data) => {
+    // We overwrite the entire collection for compatibility with existing code flow
+    // In a real optimized Firebase app, we would use push/update
+    await db.ref(collectionName).set(data);
 };
 
 module.exports = {
-    getMockUsers: () => readData().users,
-    saveMockUsers: (users) => {
-        const data = readData();
-        data.users = users;
-        writeData(data);
-    },
-    getMockWaste: () => readData().waste,
-    saveMockWaste: (waste) => {
-        const data = readData();
-        data.waste = waste;
-        writeData(data);
-    },
-    getMockMenus: () => readData().menus,
-    saveMockMenus: (menus) => {
-        const data = readData();
-        data.menus = menus;
-        writeData(data);
-    },
-    getMockFeedbacks: () => readData().feedbacks,
-    saveMockFeedbacks: (feedbacks) => {
-        const data = readData();
-        data.feedbacks = feedbacks;
-        writeData(data);
-    },
-    getMockMeals: () => readData().meals,
-    saveMockMeals: (meals) => {
-        const data = readData();
-        data.meals = meals;
-        writeData(data);
-    },
-    getMockNotifications: () => readData().notifications,
-    saveMockNotifications: (notifications) => {
-        const data = readData();
-        data.notifications = notifications;
-        writeData(data);
-    },
-    getMockComplaints: () => readData().complaints,
-    saveMockComplaints: (complaints) => {
-        const data = readData();
-        data.complaints = complaints;
-        writeData(data);
-    },
-    getMockEvents: () => readData().events,
-    saveMockEvents: (events) => {
-        const data = readData();
-        data.events = events;
-        writeData(data);
-    },
-    getMockAttendance: () => readData().attendance,
-    saveMockAttendance: (attendance) => {
-        const data = readData();
-        data.attendance = attendance;
-        writeData(data);
-    }
+    // Users
+    getMockUsers: async () => await getCollection('users'),
+    saveMockUsers: async (users) => await saveData('users', users),
+
+    // Waste
+    getMockWaste: async () => await getCollection('waste'),
+    saveMockWaste: async (waste) => await saveData('waste', waste),
+
+    // Menus
+    getMockMenus: async () => await getCollection('menus'),
+    saveMockMenus: async (menus) => await saveData('menus', menus),
+
+    // Feedbacks
+    getMockFeedbacks: async () => await getCollection('feedbacks'),
+    saveMockFeedbacks: async (feedbacks) => await saveData('feedbacks', feedbacks),
+
+    // Meals
+    getMockMeals: async () => await getCollection('meals'),
+    saveMockMeals: async (meals) => await saveData('meals', meals),
+
+    // Notifications
+    getMockNotifications: async () => await getCollection('notifications'),
+    saveMockNotifications: async (notifications) => await saveData('notifications', notifications),
+
+    // Complaints
+    getMockComplaints: async () => await getCollection('complaints'),
+    saveMockComplaints: async (complaints) => await saveData('complaints', complaints),
+
+    // Events
+    getMockEvents: async () => await getCollection('events'),
+    saveMockEvents: async (events) => await saveData('events', events),
+
+    // Attendance
+    getMockAttendance: async () => await getCollection('attendance'),
+    saveMockAttendance: async (attendance) => await saveData('attendance', attendance)
 };

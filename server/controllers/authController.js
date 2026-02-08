@@ -8,8 +8,8 @@ exports.registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
 
-        if (process.env.MOCK_DB === 'true') {
-            const users = getMockUsers();
+        if (process.env.MOCK_DB === 'true' || true) { // Force use of Firebase bridge
+            const users = await getMockUsers();
             const exists = users.find(u => u.email === email);
             if (exists) return res.status(400).json({ msg: 'User already exists' });
 
@@ -25,8 +25,8 @@ exports.registerUser = async (req, res) => {
                 createdAt: new Date()
             };
             users.push(newUser);
-            saveMockUsers(users);
-            return res.status(201).json({ msg: 'User registered successfully (Mock Mode)' });
+            await saveMockUsers(users);
+            return res.status(201).json({ msg: 'User registered successfully (Firebase)' });
         }
 
         let user = await User.findOne({ email });
@@ -69,9 +69,9 @@ exports.loginUser = async (req, res) => {
             return res.json({ token, user: { id: 'demo_student_id', name: 'Demo Student', role: 'student' } });
         }
 
-        // Support login for students in mock persistent storage
-        if (process.env.MOCK_DB === 'true') {
-            const users = getMockUsers();
+        // Support login for students in Firebase
+        if (process.env.MOCK_DB === 'true' || true) {
+            const users = await getMockUsers();
             const user = users.find(u => u.email === email);
 
             if (user) {

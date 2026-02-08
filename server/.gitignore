@@ -3,4 +3,5 @@ node_modules
 *.log
 data/temp_*.json
 temp_data.json
+serviceAccountKey.json
 .DS_Store

@@ -4,15 +4,15 @@ const { getMockMenus, saveMockMenus } = require('../utils/mockPersistence');
 
 // @route   GET api/menu
 // @desc    Get menu
-router.get('/', (req, res) => {
-    res.json(getMockMenus());
+router.get('/', async (req, res) => {
+    res.json(await getMockMenus());
 });
 
 // @route   POST api/menu
 // @desc    Create or Update a menu
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const { date, dayOfWeek, meals } = req.body;
-    const menus = getMockMenus();
+    const menus = await getMockMenus();
 
     // Find if menu for this date already exists
     const index = menus.findIndex(m => m.date === date);
@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
         menus.push(newMenu);
     }
 
-    saveMockMenus(menus);
+    await saveMockMenus(menus);
     res.json(newMenu);
 });
 
