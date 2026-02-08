@@ -54,7 +54,7 @@ export default function StudentDashboard() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const notifRes = await axios.get('http://127.0.0.1:5001/api/notifications', {
+                    const notifRes = await axios.get('http://127.0.0.1:5002/api/notifications', {
                         headers: { 'x-auth-token': token }
                     });
 
@@ -82,12 +82,12 @@ export default function StudentDashboard() {
             const config = { headers: { 'x-auth-token': token } };
 
             const [menuRes, mealsRes, notifRes, statsRes, eventsRes, feedRes] = await Promise.all([
-                axios.get('http://127.0.0.1:5001/api/menu'),
-                axios.get('http://127.0.0.1:5001/api/meals'),
-                axios.get('http://127.0.0.1:5001/api/notifications', config),
-                axios.get('http://127.0.0.1:5001/api/student-stats', config),
-                axios.get('http://127.0.0.1:5001/api/events', config),
-                axios.get('http://127.0.0.1:5001/api/feedback')
+                axios.get('http://127.0.0.1:5002/api/menu'),
+                axios.get('http://127.0.0.1:5002/api/meals'),
+                axios.get('http://127.0.0.1:5002/api/notifications', config),
+                axios.get('http://127.0.0.1:5002/api/student-stats', config),
+                axios.get('http://127.0.0.1:5002/api/events', config),
+                axios.get('http://127.0.0.1:5002/api/feedback')
             ]);
 
             // Process Menu
@@ -173,7 +173,7 @@ export default function StudentDashboard() {
                 photoBase64 = await toBase64(photo);
             }
 
-            await axios.post('http://127.0.0.1:5001/api/feedback', {
+            await axios.post('http://127.0.0.1:5002/api/feedback', {
                 mealType: targetMeal.type,
                 mealName: targetMeal.name,
                 rating,
@@ -191,7 +191,7 @@ export default function StudentDashboard() {
         if (!complaintType || !complaintDesc) return alert("Please fill details");
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://127.0.0.1:5001/api/complaints', {
+            await axios.post('http://127.0.0.1:5002/api/complaints', {
                 type: complaintType,
                 description: complaintDesc
             }, { headers: { 'x-auth-token': token } });
@@ -204,7 +204,7 @@ export default function StudentDashboard() {
     const handleEventVote = async (eventId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://127.0.0.1:5001/api/events/${eventId}/vote`, {}, { headers: { 'x-auth-token': token } });
+            await axios.post(`http://127.0.0.1:5002/api/events/${eventId}/vote`, {}, { headers: { 'x-auth-token': token } });
             alert("Vote registered!");
             fetchDashboardData();
         } catch (err) { alert(err.response?.data?.msg || "Vote failed"); }
@@ -214,7 +214,7 @@ export default function StudentDashboard() {
         try {
             const token = localStorage.getItem('token');
             const todayStr = format(new Date(), 'yyyy-MM-dd');
-            await axios.post('http://127.0.0.1:5001/api/attendance', {
+            await axios.post('http://127.0.0.1:5002/api/attendance', {
                 mealType: targetMeal.type,
                 dateStr: todayStr
             }, { headers: { 'x-auth-token': token } });

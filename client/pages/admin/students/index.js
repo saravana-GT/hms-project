@@ -33,7 +33,7 @@ export default function StudentManagement() {
     const fetchStudents = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://127.0.0.1:5001/api/students', {
+            const res = await axios.get('http://127.0.0.1:5002/api/students', {
                 headers: { 'x-auth-token': token }
             });
             setStudents(res.data);
@@ -50,7 +50,7 @@ export default function StudentManagement() {
         if (!confirm('Are you sure you want to remove this student?')) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://127.0.0.1:5001/api/students/${id}`, {
+            await axios.delete(`http://127.0.0.1:5002/api/students/${id}`, {
                 headers: { 'x-auth-token': token }
             });
             toast.success('Student removed successfully');
@@ -123,7 +123,7 @@ export default function StudentManagement() {
                 }
 
                 const token = localStorage.getItem('token');
-                await axios.post('http://127.0.0.1:5001/api/students/bulk',
+                await axios.post('http://127.0.0.1:5002/api/students/bulk',
                     { students: studentsToImport },
                     { headers: { 'x-auth-token': token } }
                 );
@@ -134,7 +134,7 @@ export default function StudentManagement() {
             } catch (err) {
                 console.error("Bulk Import Error:", err);
                 if (err.message === "Network Error") {
-                    toast.error("Network Error: Cannot connect to server. Ensure backend is running at 127.0.0.1:5001");
+                    toast.error("Network Error: Cannot connect to server. Ensure backend is running at 127.0.0.1:5002");
                 } else {
                     toast.error("Import failed: " + (err.response?.data?.msg || err.message));
                 }

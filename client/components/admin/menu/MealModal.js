@@ -45,10 +45,10 @@ export default function MealModal({ isOpen, onClose, onSave, meal = null }) {
 
         try {
             if (meal?._id) {
-                await axios.put(`http://localhost:5001/api/meals/${meal._id}`, data);
+                await axios.put(`http://localhost:5002/api/meals/${meal._id}`, data);
                 toast.success('Meal updated!');
             } else {
-                await axios.post('http://localhost:5001/api/meals', data);
+                await axios.post('http://localhost:5002/api/meals', data);
                 toast.success('Meal created!');
             }
             onSave();

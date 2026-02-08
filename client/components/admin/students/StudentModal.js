@@ -65,11 +65,11 @@ export default function StudentModal({ isOpen, onClose, onSave, student }) {
                 const updateData = { ...formData };
                 if (!updateData.password) delete updateData.password; // Don't send empty password
 
-                await axios.put(`http://localhost:5001/api/students/${student._id}`, updateData, config);
+                await axios.put(`http://localhost:5002/api/students/${student._id}`, updateData, config);
                 toast.success('Student updated successfully');
             } else {
                 // Create
-                await axios.post('http://localhost:5001/api/students', formData, config);
+                await axios.post('http://localhost:5002/api/students', formData, config);
                 toast.success('Student created successfully');
             }
             onSave();
