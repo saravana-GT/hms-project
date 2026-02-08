@@ -3,10 +3,8 @@ const { getMockNotifications, saveMockNotifications } = require('../utils/mockPe
 // @desc    Get all notifications
 exports.getNotifications = async (req, res) => {
     try {
-        if (process.env.MOCK_DB === 'true') {
-            return res.json(getMockNotifications());
-        }
-        res.json([]);
+        const notifications = await getMockNotifications();
+        res.json(notifications);
     } catch (err) {
         res.status(500).json({ msg: "Server Error" });
     }
@@ -16,19 +14,16 @@ exports.getNotifications = async (req, res) => {
 exports.addNotification = async (req, res) => {
     try {
         const { message, type } = req.body;
-        if (process.env.MOCK_DB === 'true') {
-            const notifications = getMockNotifications();
-            const newNotif = {
-                id: Date.now().toString(),
-                message,
-                type: type || 'info', // info, success, warning, danger
-                createdAt: new Date().toISOString()
-            };
-            notifications.unshift(newNotif);
-            saveMockNotifications(notifications.slice(0, 50)); // Keep last 50
-            return res.json(newNotif);
-        }
-        res.json({ msg: "Not available in production mode yet" });
+        const notifications = await getMockNotifications();
+        const newNotif = {
+            id: Date.now().toString(),
+            message,
+            type: type || 'info', // info, success, warning, danger
+            createdAt: new Date().toISOString()
+        };
+        notifications.unshift(newNotif);
+        await saveMockNotifications(notifications.slice(0, 50)); // Keep last 50
+        return res.json(newNotif);
     } catch (err) {
         res.status(500).json({ msg: "Server Error" });
     }

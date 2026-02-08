@@ -9,11 +9,16 @@ const admin = require('../middleware/admin');
 
 router.get('/predict', auth, admin, async (req, res) => {
     try {
+        const feedbacks = await getMockFeedbacks();
+        const waste = await getMockWaste();
+        const attendance = await getMockAttendance();
+        const users = await getMockUsers();
+
         const data = {
-            feedbacks: getMockFeedbacks(),
-            waste: getMockWaste(),
-            attendance: getMockAttendance(),
-            student_count: getMockUsers().filter(u => u.role === 'student').length || 200
+            feedbacks,
+            waste,
+            attendance,
+            student_count: users.filter(u => u.role === 'student').length || 200
         };
 
         // Create a temporary file for the Python script to read
