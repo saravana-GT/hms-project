@@ -2,7 +2,7 @@ services:
   # Backend Server
   - type: web
     name: hms-server
-    env: node
+    runtime: node
     rootDir: server
     buildCommand: npm install
     startCommand: node server.js
@@ -11,8 +11,6 @@ services:
         value: 10000
       - key: JWT_SECRET
         generateValue: true
-      - key: MONGO_URI
-        value: "" # Using Firebase instead
       - key: FIREBASE_PROJECT_ID
         sync: false
       - key: FIREBASE_PRIVATE_KEY
@@ -23,7 +21,7 @@ services:
   # Frontend Client (Next.js)
   - type: web
     name: hms-client
-    env: node
+    runtime: node
     rootDir: client
     buildCommand: npm install && npm run build
     startCommand: npm run start
