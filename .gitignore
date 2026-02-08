@@ -1,0 +1,11 @@
+# Root .gitignore
+node_modules/
+.next/
+out/
+build/
+.env*
+*.log
+data/temp_*.json
+temp_data.json
+.DS_Store
+dist/
